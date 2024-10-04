@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Meeting</title>
+    <style>
+        .time-slot {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .available {
+            background-color: green;
+            color: white;
+        }
+        .unavailable {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select Date and Time for Meeting</h1>
+    <form action="contact.php" method="post">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="timezone">Select Time Zone:</label>
+        <select id="timezone" name="timezone" required>
+            <option value="Asia/Kolkata">India (IST, GMT+5:30)</option>
+            <script>
+                // Get today's date in the format yyyy-mm-dd
+                var today = new Date().toISOString().split('T')[0];
+                
+                // Set the minimum selectable date to today
+                document.getElementById("date").setAttribute("min", today);
+            </script>
+            <!-- Add more time zones as needed -->
+        </select>
+        <h2>Select a Time Slot:</h2>
+        <div id="time-slots"></div>
+
+        <input type="hidden" id="selected-time" name="selected_time">
+        <button type="submit" id="submit-btn" disabled>Next</button>
+    </form>
+
+    <script>
+document.getElementById('date').addEventListener('change', function() {   
+  const selectedDate = this.value;   
+  fetch(`get_times.php?date=${selectedDate}`)   
+   .then(response => response.json())   
+   .then(data => {   
+    const timeSlotsDiv = document.getElementById('time-slots');   
+    timeSlotsDiv.innerHTML = '';   
+    data.forEach(slot => {   
+      const timeSlotBtn = document.createElement('div');   
+      timeSlotBtn.className = `time-slot ${slot.available ? 'available' : 'unavailable'}`;   
+      timeSlotBtn.textContent = slot.time;   
+      if (slot.available) {   
+       timeSlotBtn.onclick = () => {   
+        const selectedTime = slot.time;   
+        const formData = new FormData();   
+        formData.append('date', selectedDate);   
+        formData.append('time', selectedTime);   
+        fetch('contact.php', {   
+          method: 'POST',   
+          body: formData   
+        })   
+        .then(response => response.text())   
+        .then(html => {   
+          document.body.innerHTML = html;   
+        });   
+       };   
+      }   
+      timeSlotsDiv.appendChild(timeSlotBtn);   
+    });   
+   })   
+   .catch(error => {   
+    console.error('Error fetching time slots:', error);   
+   });   
+});
+
+    </script>
+</body>
+</html>

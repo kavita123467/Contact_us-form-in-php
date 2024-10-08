@@ -125,7 +125,7 @@ if (empty($errors)) {
                 echo json_encode($response);
 
                 // Send confirmation email to host
-                $to = "perfectiongeeks@gmail.com"; 
+                $to = "example@gmail.com"; 
                 $subject = "New Appointment Request";
                 $message = '
                 <html>
@@ -144,8 +144,8 @@ if (empty($errors)) {
                     $mail->isSMTP();                                      
                     $mail->Host = 'smtp.gmail.com';                       
                     $mail->SMTPAuth = true;                               
-                    $mail->Username = 'perfectiongeeks@gmail.com';                    
-                    $mail->Password = 'odloplohkpmuyqhq';             
+                    $mail->Username = 'example@gmail.com';                    
+                    $mail->Password = 'encodedpassword';             
                     $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port = 587;                                  
                     $mail->setFrom($email, $name);
